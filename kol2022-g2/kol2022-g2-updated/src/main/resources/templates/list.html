@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>WP Exam</title>
+</head>
+<body>
+
+<div>
+    <!-- The form below should invoke the method StudentController.showList -->
+    <form id="filter-form" action="/">
+        <label for="f1">YearsOfStudying</label>
+        <input id="f1" type="number" name = "yearsOfStudying"/>
+        <label for="f2">Course</label>
+        <select id="f2" name = "courseId">
+            <option value="">All</option>
+            <!-- For each course you should have one <option> like below  -->
+            <option th:each="c: ${courses}" th:value="${c.getId()}" th:text="${c.getName()}"> [course]</option>
+        </select>
+        <button  id="filter" type="submit">Filter</button>
+    </form>
+    <div>
+        <!-- CourseController.showAdd (Only ADMIN can see this element)-->
+            <a sec:authorize = "hasRole('ROLE_ADMIN')"  href="/students/add" class="add-item">
+                Add
+            </a>
+    </div>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Type</th>
+            <th>Courses</th>
+            <th>Actions</th>
+        </tr>
+        <!-- For each student you should have one <tr> like below -->
+        <tr th:each="student: ${students}" class="item">
+            <td th:text="${student.getName()}">[student.name]</td>
+            <td th:text="${student.getEmail()}">[student.email]</td>
+            <td th:text="${student.getType()}">[student.type]</td>
+            <td th:each="c: ${student.getCourses()}">
+                <!-- For each of the student.courses show the following element-->
+                <span th:text="${c.getName()}" class="item-rel"> [course.name]</span>
+            </td>
+            <td>
+                    <!-- StudentController.delete (Only ADMIN can see this element)-->
+                    <form method="post" th:action="@{'/students/{id}/delete' (id = ${student.getId()})}">
+                        <button sec:authorize = "hasRole('ROLE_ADMIN')" type="submit" class="delete-item">Delete</button>
+                    </form>
+                    <!-- StudentController.showEdit (Only ADMIN can see this element)-->
+                    <a sec:authorize = "hasRole('ROLE_ADMIN')" th:href="@{'/students/{id}/edit' (id = ${student.getId()})}" class="edit-item">Edit</a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<div>
+    <ul id="nav">
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/logout">Logout</a></li>
+    </ul>
+</div>
+</body>
+</html>
