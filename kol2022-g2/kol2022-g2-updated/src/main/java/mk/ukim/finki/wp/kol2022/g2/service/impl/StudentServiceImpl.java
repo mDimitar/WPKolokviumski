@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class StudentServiceImpl implements StudentService, UserDetailsService {
+public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
@@ -92,11 +92,4 @@ public class StudentServiceImpl implements StudentService, UserDetailsService {
         return this.listAll();
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Student user = this.studentRepository.findByEmail(username).orElseThrow(()->new UsernameNotFoundException("user not found"));
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
-        return new User(user.getEmail(), user.getPassword(), authorities);
-    }
 }
